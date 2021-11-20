@@ -2,6 +2,7 @@
 
 import requests
 from bs4 import BeautifulSoup
+import os
 
 mie_notice_board_url = "https://www.cuet.ac.bd/dept/mie/notice-board"
 data = requests.get(mie_notice_board_url)
@@ -18,6 +19,7 @@ table_rows = table.find_all('tr')[1:]
 # print(table_rows)
 
 latest_notice_number = 0
+os.chdir('outputs')
 
 for tr in table_rows:
     td = tr.find_all('td')
@@ -33,7 +35,7 @@ for tr in table_rows:
 
                 response = requests.get(dwnld_link)
 
-                #writing content in pdf file
+                #writing content in pdf file                
                 pdf = open("latest_notice" + str(latest_notice_number) + ".pdf" , 'wb')
                 pdf.write(response.content)
                 pdf.close()
