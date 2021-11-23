@@ -41,6 +41,6 @@ for tr in table_rows:
                 pdf.close()
                 print("file ", latest_notice_number, "downloaded")
     
-print("latest 5 notice downloaded")
+print("latest 5 notices downloaded")
 
 
