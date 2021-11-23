@@ -1,5 +1,8 @@
 ##this is from the https://www.youtube.com/watch?v=t2k5Lsbpj8Y tutorials
+## for more https://www.youtube.com/watch?v=YEUbMnMqJG0 tutorial is also helpful for bulk image
+## with this code we can download around 100 image in a single html parsing
 
+from bs4.builder import TreeBuilderRegistry
 from bs4.dammit import html_meta
 import requests
 from bs4 import BeautifulSoup
@@ -44,13 +47,6 @@ def search_image():
     # print(html)
     return response
 
-def parse_html():
-    response = search_image()
-    soup = BeautifulSoup(response.content,'html.parser')
-    results = soup.findAll('img', {'class': 'rg_i'})
-    print('total {} images found!!'.format(len(results)))
-
-
 ########### to open the html file with browser ############
 def see_html():
     html = search_image().text
@@ -61,7 +57,51 @@ def see_html():
 #########################################################
 
 
+def parse_html():
+    response = search_image()
+    soup = BeautifulSoup(response.content,'html.parser')
+    results = soup.findAll('img', {'class': 'rg_i'})
+    print('total {} images found!!'.format(len(results)))
+
+    return results
+
+download_folder = 'outputs/googleimage'
+def download_image():
+    if not os.path.exists(download_folder):
+        os.mkdir(download_folder)
+
+    count = 0
+    imagelinks = []
+    results = parse_html()
+    for res in results:
+        try:
+            link = res['data-src']
+            imagelinks.append(link)
+            count += 1
+            if (count>= int(args['number'])):
+                break
+            
+        except KeyError:
+            continue
+    
+    print('Found {} imageLinks'.format(len(imagelinks)))
+    print('Start Downloading...')
+
+    for i,j in enumerate(imagelinks):
+        response_img  = requests.get(j)
+
+        #file writing operation
+        imagename = download_folder + '/' + data + str(i+1) + '.jpg'
+        with open(imagename, 'wb') as img:
+            img.write(response_img.content)
+        
+        print('Downloading {} {} image'.format(i+1,args['search']))
+    
+    print('Download Complete!!')
+
+
 
 if __name__ == '__main__':
     # see_html()
-    parse_html()
+    # parse_html()
+    download_image()
